@@ -2,6 +2,7 @@
 #include <fstream>
 #include <string>
 #include <vector>
+#include <omp.h>
 #include <map>
 
 using namespace std;
@@ -21,15 +22,19 @@ int main(int argc, char* argv[]){
 	while(inf>>word){
 		word_state[word]++;
 	}
-	vector<string> chars;
-	string tmp;
-	int char_num;
 	map<string, int> sub;
+	map<string, int> full;
+omp_set_num_threads(24);
+#pragma omp parallel 
 	for (map<string, long>::iterator it = word_state.begin(); it != word_state.end(); it++) {
-		word = it->first;
-		if (isFullUp(it, word, word_state) && isFullDown(it, word, word_state))
-			full_word << word << endl;
-		getCharactersFromUTF8String(word, chars);
+		vector<string> chars;
+		string tmp;
+		int char_num;
+		string curword;
+		curword = it->first;
+		if (isFullUp(it, curword, word_state) && isFullDown(it, curword, word_state))
+			full[curword] = 1;
+		getCharactersFromUTF8String(curword, chars);
 		tmp = "";
 		char_num = chars.size();
 		for(int idx = 0; idx < char_num - 1; idx++){
@@ -39,9 +44,15 @@ int main(int argc, char* argv[]){
 					sub[tmp] = 1;
 		}
 	}
+
+	for(map<string,int>::iterator it = full.begin(); it != full.end(); it++) {
+		full_word << it->first << endl;
+	}
+
 	for(map<string,int>::iterator it = sub.begin(); it != sub.end(); it++) {
 		sub_word << it->first << endl;
 	}
+
 	inf.close();
 	full_word.close();
 	sub_word.close();
