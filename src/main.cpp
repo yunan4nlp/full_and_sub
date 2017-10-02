@@ -114,6 +114,8 @@ bool isSubUp(const map<string, long>::iterator& it, const string& str, const map
 		string curWord;
 		while(up != word_state.begin()) {
 			curWord = up->first;
+			if ((curWord)[0] != str[0])
+				break;
 			if (curWord == str) {
 				IS_SUB = false;
 				break;
@@ -131,6 +133,8 @@ bool isSubDown(const map<string, long>::iterator& it, const string& str, const m
 		string curWord;
 		while(down != word_state.end()) {
 			curWord = down->first;
+			if ((curWord)[0] != str[0])
+				break;
 			if (curWord == str) {
 				IS_SUB = false;
 				break;
