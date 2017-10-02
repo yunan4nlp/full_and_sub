@@ -33,6 +33,7 @@ omp_set_num_threads(24);
 		string curword;
 		curword = it->first;
 		if (isFullUp(it, curword, word_state) && isFullDown(it, curword, word_state))
+#pragma omp critical 
 			full[curword] = 1;
 		getCharactersFromUTF8String(curword, chars);
 		tmp = "";
@@ -41,6 +42,7 @@ omp_set_num_threads(24);
 			tmp += chars[idx];
 			if (sub.find(tmp) == sub.end())
 				if (isSubUp(it, tmp, word_state) && isSubDown(it, tmp, word_state))
+#pragma omp critical 
 					sub[tmp] = 1;
 		}
 	}
