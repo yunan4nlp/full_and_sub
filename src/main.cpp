@@ -41,7 +41,7 @@ omp_set_num_threads(24);
 		string tmp = "";
 		for (int idx = 0; idx < char_num - 1; idx++) {
 			tmp += chars[idx];
-			if (full.find(tmp) == full.end()) {
+			if (word_state.find(tmp) == word_state.end()) {
 #pragma omp critical 
 				sub[tmp] = 1;
 			}
