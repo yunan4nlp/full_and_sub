@@ -22,6 +22,7 @@ int main(int argc, char* argv[]){
 	while(inf>>word){
 		word_state[word]++;
 	}
+	cout << "word size:" << word_state.size() << endl;
 	map<string, int> sub;
 	map<string, int> full;
 omp_set_num_threads(24);
@@ -40,6 +41,7 @@ omp_set_num_threads(24);
 		char_num = chars.size();
 		for(int idx = 0; idx < char_num - 1; idx++){
 			tmp += chars[idx];
+#pragma omp critical 
 			if (sub.find(tmp) == sub.end())
 				if (isSubUp(it, tmp, word_state) && isSubDown(it, tmp, word_state))
 #pragma omp critical 
@@ -65,21 +67,16 @@ omp_set_num_threads(24);
 bool isFullUp(const map<string, long>::iterator& it, const string& str, const map<string, long>& word_state){
 		bool IS_FULL = true;
 		map<string, long>::iterator up = it;
-		if (up != word_state.begin())
-			up--;
-		string curWord;
-		while(up != word_state.begin()) {
-			curWord = up->first;
-			if ((curWord)[0] != str[0])
-				break;
-			if ((curWord).length() >= str.length()) {
-				string tmp = (curWord).substr(0, str.length());
-				if (tmp == str) {
-					IS_FULL = false;
-					break;
-				}
+		up--;
+		string sub_str;
+		if (up != word_state.end()) {
+			string curWord = up->first;
+			int str_len = str.length();
+			if(str_len <= curWord.length()) {
+				 sub_str= curWord.substr(0, str_len);
+				 if (sub_str == str)
+					 IS_FULL = false;
 			}
-			up--;
 		}
 		return IS_FULL;
 }
@@ -87,21 +84,17 @@ bool isFullUp(const map<string, long>::iterator& it, const string& str, const ma
 bool isFullDown(const map<string, long>::iterator& it, const string& str, const map<string, long>& word_state) {
 		bool IS_FULL = true;
 		map<string, long>::iterator down = it;
-		if (down != word_state.end())
-			down++;
-		string curWord;
-		while(down != word_state.end()) {
-			curWord = down->first;
-			if ((curWord)[0] != str[0])
-				break;
-			if ((curWord).length() >= str.length()) {
-				string tmp = (curWord).substr(0, str.length());
-				if (tmp == str) {
-					IS_FULL = false;
-					break;
-				}
+		down++;
+		string sub_str;
+		if (down != word_state.end()) {
+			string curWord = down->first;
+			int str_len = str.length();
+			if(str_len <= curWord.length()) {
+				 sub_str= curWord.substr(0, str_len);
+				 if (sub_str == str) {
+					 IS_FULL = false;
+				 }
 			}
-			down++;
 		}
 		return IS_FULL;
 }
@@ -109,12 +102,11 @@ bool isFullDown(const map<string, long>::iterator& it, const string& str, const 
 bool isSubUp(const map<string, long>::iterator& it, const string& str, const map<string, long>& word_state) {
 		bool IS_SUB = true;
 		map<string, long>::iterator up = it;
-		if (up != word_state.begin())
-			up--;
+		up--;
 		string curWord;
-		while(up != word_state.begin()) {
+		while(up != word_state.end()) {
 			curWord = up->first;
-			if ((curWord)[0] != str[0])
+			if (curWord[0] != str[0])
 				break;
 			if (curWord == str) {
 				IS_SUB = false;
@@ -128,12 +120,11 @@ bool isSubUp(const map<string, long>::iterator& it, const string& str, const map
 bool isSubDown(const map<string, long>::iterator& it, const string& str, const map<string, long>& word_state) {
 		bool IS_SUB = true;
 		map<string, long>::iterator down = it;
-		if (down != word_state.end())
-			down++;
+		down++;
 		string curWord;
 		while(down != word_state.end()) {
 			curWord = down->first;
-			if ((curWord)[0] != str[0])
+			if (curWord[0] != str[0])
 				break;
 			if (curWord == str) {
 				IS_SUB = false;
