@@ -1,1 +1,2 @@
-add_executable(fullAndSub main.cpp)
+add_subdirectory(fullSub)
+add_subdirectory(fullSubBoth)
